@@ -14,7 +14,254 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      legend_votes: {
+        Row: {
+          created_at: string
+          legend_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          legend_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          legend_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legend_votes_legend_id_fkey"
+            columns: ["legend_id"]
+            isOneToOne: false
+            referencedRelation: "legends"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legends: {
+        Row: {
+          author_id: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          school_id: string
+          score: number
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          school_id: string
+          score?: number
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          school_id?: string
+          score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legends_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          active_school_id: string | null
+          created_at: string
+          display_handle: string
+          id: string
+        }
+        Insert: {
+          active_school_id?: string | null
+          created_at?: string
+          display_handle: string
+          id: string
+        }
+        Update: {
+          active_school_id?: string | null
+          created_at?: string
+          display_handle?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_active_school_fk"
+            columns: ["active_school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_members: {
+        Row: {
+          joined_at: string
+          school_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          school_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          school_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_members_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      schools: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      stories: {
+        Row: {
+          author_id: string
+          body: string
+          category: Database["public"]["Enums"]["story_category"]
+          comment_count: number
+          created_at: string
+          id: string
+          school_id: string
+          score: number
+          title: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          category: Database["public"]["Enums"]["story_category"]
+          comment_count?: number
+          created_at?: string
+          id?: string
+          school_id: string
+          score?: number
+          title: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          category?: Database["public"]["Enums"]["story_category"]
+          comment_count?: number
+          created_at?: string
+          id?: string
+          school_id?: string
+          score?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stories_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          story_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          story_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_comments_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_votes: {
+        Row: {
+          created_at: string
+          story_id: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          story_id: string
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          story_id?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_votes_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +270,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      story_category:
+        | "teachers"
+        | "exams"
+        | "backbenchers"
+        | "school_trips"
+        | "friend_groups"
+        | "classroom_chaos"
+        | "confessions"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +404,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      story_category: [
+        "teachers",
+        "exams",
+        "backbenchers",
+        "school_trips",
+        "friend_groups",
+        "classroom_chaos",
+        "confessions",
+      ],
+    },
   },
 } as const
