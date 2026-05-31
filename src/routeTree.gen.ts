@@ -9,38 +9,158 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as SchoolsRouteImport } from './routes/schools'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LegendsRouteImport } from './routes/legends'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoriesNewRouteImport } from './routes/stories.new'
+import { Route as StoriesIdRouteImport } from './routes/stories.$id'
+import { Route as LegendsNewRouteImport } from './routes/legends.new'
 
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchoolsRoute = SchoolsRouteImport.update({
+  id: '/schools',
+  path: '/schools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegendsRoute = LegendsRouteImport.update({
+  id: '/legends',
+  path: '/legends',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoriesNewRoute = StoriesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => StoriesRoute,
+} as any)
+const StoriesIdRoute = StoriesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => StoriesRoute,
+} as any)
+const LegendsNewRoute = LegendsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => LegendsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/legends': typeof LegendsRouteWithChildren
+  '/login': typeof LoginRoute
+  '/schools': typeof SchoolsRoute
+  '/stories': typeof StoriesRouteWithChildren
+  '/legends/new': typeof LegendsNewRoute
+  '/stories/$id': typeof StoriesIdRoute
+  '/stories/new': typeof StoriesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/legends': typeof LegendsRouteWithChildren
+  '/login': typeof LoginRoute
+  '/schools': typeof SchoolsRoute
+  '/stories': typeof StoriesRouteWithChildren
+  '/legends/new': typeof LegendsNewRoute
+  '/stories/$id': typeof StoriesIdRoute
+  '/stories/new': typeof StoriesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/legends': typeof LegendsRouteWithChildren
+  '/login': typeof LoginRoute
+  '/schools': typeof SchoolsRoute
+  '/stories': typeof StoriesRouteWithChildren
+  '/legends/new': typeof LegendsNewRoute
+  '/stories/$id': typeof StoriesIdRoute
+  '/stories/new': typeof StoriesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/legends'
+    | '/login'
+    | '/schools'
+    | '/stories'
+    | '/legends/new'
+    | '/stories/$id'
+    | '/stories/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/legends'
+    | '/login'
+    | '/schools'
+    | '/stories'
+    | '/legends/new'
+    | '/stories/$id'
+    | '/stories/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/legends'
+    | '/login'
+    | '/schools'
+    | '/stories'
+    | '/legends/new'
+    | '/stories/$id'
+    | '/stories/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LegendsRoute: typeof LegendsRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  SchoolsRoute: typeof SchoolsRoute
+  StoriesRoute: typeof StoriesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schools': {
+      id: '/schools'
+      path: '/schools'
+      fullPath: '/schools'
+      preLoaderRoute: typeof SchoolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legends': {
+      id: '/legends'
+      path: '/legends'
+      fullPath: '/legends'
+      preLoaderRoute: typeof LegendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +168,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stories/new': {
+      id: '/stories/new'
+      path: '/new'
+      fullPath: '/stories/new'
+      preLoaderRoute: typeof StoriesNewRouteImport
+      parentRoute: typeof StoriesRoute
+    }
+    '/stories/$id': {
+      id: '/stories/$id'
+      path: '/$id'
+      fullPath: '/stories/$id'
+      preLoaderRoute: typeof StoriesIdRouteImport
+      parentRoute: typeof StoriesRoute
+    }
+    '/legends/new': {
+      id: '/legends/new'
+      path: '/new'
+      fullPath: '/legends/new'
+      preLoaderRoute: typeof LegendsNewRouteImport
+      parentRoute: typeof LegendsRoute
+    }
   }
 }
 
+interface LegendsRouteChildren {
+  LegendsNewRoute: typeof LegendsNewRoute
+}
+
+const LegendsRouteChildren: LegendsRouteChildren = {
+  LegendsNewRoute: LegendsNewRoute,
+}
+
+const LegendsRouteWithChildren =
+  LegendsRoute._addFileChildren(LegendsRouteChildren)
+
+interface StoriesRouteChildren {
+  StoriesIdRoute: typeof StoriesIdRoute
+  StoriesNewRoute: typeof StoriesNewRoute
+}
+
+const StoriesRouteChildren: StoriesRouteChildren = {
+  StoriesIdRoute: StoriesIdRoute,
+  StoriesNewRoute: StoriesNewRoute,
+}
+
+const StoriesRouteWithChildren =
+  StoriesRoute._addFileChildren(StoriesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LegendsRoute: LegendsRouteWithChildren,
+  LoginRoute: LoginRoute,
+  SchoolsRoute: SchoolsRoute,
+  StoriesRoute: StoriesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
