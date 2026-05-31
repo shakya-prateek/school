@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { SiteNav } from "@/components/SiteNav";
 import { useAuth } from "@/lib/auth-context";
-import { getMyContext } from "@/lib/schools.functions";
+import { getMyContext, resolveViewSchool } from "@/lib/schools.functions";
 import { CATEGORY_LABELS, STORY_CATEGORIES, createStory } from "@/lib/stories.functions";
 import { toast } from "sonner";
 
@@ -16,7 +16,9 @@ export const Route = createFileRoute("/stories/new")({
 function NewStoryPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const fetchCtx = useServerFn(getMyContext);
+  const fetchViewSchool = useServerFn(resolveViewSchool);
   const doCreate = useServerFn(createStory);
 
   const [title, setTitle] = useState("");
@@ -28,29 +30,43 @@ function NewStoryPage() {
   }, [user, loading, navigate]);
 
   const { data: ctx } = useQuery({ queryKey: ["me"], queryFn: () => fetchCtx(), enabled: !!user });
-  const schoolId = ctx?.activeSchool?.id;
+  const activeSchoolId = ctx?.activeSchool?.id;
+
+  const { data: viewSchool, isLoading: schoolLoading } = useQuery({
+    queryKey: ["viewSchool", activeSchoolId ?? "default"],
+    queryFn: () => fetchViewSchool({ data: { schoolId: activeSchoolId } }),
+  });
+
+  const schoolId = viewSchool?.school?.id;
 
   const create = useMutation({
     mutationFn: () => doCreate({ data: { schoolId: schoolId!, title, body, category } }),
-    onSuccess: (r) => {
+    onSuccess: async (r) => {
+      await qc.invalidateQueries({ queryKey: ["stories"] });
+      await qc.invalidateQueries({ queryKey: ["home"] });
       toast.success("Story posted!");
-      navigate({ to: "/stories/$id", params: { id: r.id } });
+      navigate({ to: "/stories" });
     },
     onError: (e: any) => toast.error(e.message),
   });
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <SiteNav schoolName={ctx?.activeSchool?.name} />
+      <SiteNav schoolName={viewSchool?.school?.name ?? ctx?.activeSchool?.name} />
       <main className="max-w-2xl mx-auto px-4 md:px-8 pb-24">
         <h1 className="text-4xl font-bold mb-2">Share a memory</h1>
         <p className="font-hand text-xl opacity-70 mb-8">Anonymous. Just don't be cruel.</p>
 
-        {!schoolId ? (
+        {schoolLoading ? (
+          <p className="font-hand text-xl opacity-70 text-center py-12">Loading...</p>
+        ) : !schoolId ? (
           <div className="bg-card border-2 border-dashed border-ink/30 p-8 rounded-xl text-center">
-            <p className="font-hand text-xl mb-4">Pick a school first.</p>
-            <Link to="/schools" className="bg-foreground text-background px-4 py-2 font-bold rounded shadow-zine-sm">
-              Choose a school
+            <p className="font-hand text-xl mb-4">No school yet. Create one to post.</p>
+            <Link
+              to="/schools"
+              className="bg-foreground text-background px-4 py-2 font-bold rounded shadow-zine-sm"
+            >
+              Add a school
             </Link>
           </div>
         ) : (
@@ -62,8 +78,6 @@ function NewStoryPage() {
             className="bg-card border-2 border-ink rounded-xl p-6 shadow-zine space-y-4"
           >
             <input
-              required
-              minLength={3}
               maxLength={140}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -82,8 +96,6 @@ function NewStoryPage() {
               ))}
             </select>
             <textarea
-              required
-              minLength={5}
               maxLength={5000}
               rows={8}
               value={body}

@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
@@ -45,40 +44,24 @@ function LoginPage() {
     }
   }
 
-  async function handleGoogle() {
-    setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/schools",
-    });
-    if (result.error) {
-      toast.error("Google sign-in failed");
-      setBusy(false);
-    }
-  }
-
   return (
     <div className="min-h-screen bg-paper text-ink flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <Link to="/" className="block text-center text-2xl font-bold mb-8 border-b-4 border-marker-pink inline-block">
+        <Link
+          to="/"
+          className="block text-center text-2xl font-bold mb-8 border-b-4 border-marker-pink inline-block"
+        >
           BunkyBloom
         </Link>
         <div className="bg-card border-2 border-ink rounded-xl p-8 shadow-zine">
-          <h1 className="text-3xl font-bold mb-2">{mode === "signin" ? "Welcome back" : "Join the chronicles"}</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            {mode === "signin" ? "Welcome back" : "Join the chronicles"}
+          </h1>
           <p className="text-sm opacity-70 mb-6 font-hand text-lg">
-            {mode === "signin" ? "Sign in to post and vote." : "Create an account to share your stories."}
+            {mode === "signin"
+              ? "Sign in to post and vote."
+              : "Create an account to share your stories."}
           </p>
-
-          <button
-            onClick={handleGoogle}
-            disabled={busy}
-            className="w-full mb-4 py-3 border-2 border-ink rounded font-bold hover:bg-paper transition-colors disabled:opacity-50"
-          >
-            Continue with Google
-          </button>
-
-          <div className="flex items-center gap-3 my-4 text-xs uppercase tracking-widest opacity-50">
-            <div className="h-px flex-1 bg-ink/20" /> or <div className="h-px flex-1 bg-ink/20" />
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             <input

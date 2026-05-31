@@ -5,6 +5,7 @@ A school-scoped community where students anonymously share funny memories and vo
 ### Scope (v1)
 
 In:
+
 - Auth: email/password + Google sign-in (Lovable Cloud)
 - Schools: users create or search-and-join any school; everything is scoped to the active school
 - Stories: create, list, single-vote up/down, comment, filter by category, search, sort by Trending / Newest
@@ -12,6 +13,7 @@ In:
 - Anonymous identity (display name like "Anonymous Junior"; real user id stored server-side only)
 
 Out (deferred):
+
 - Profile page, badges, admin dashboard, notifications, image uploads, downvotes on legends, anonymous guest mode
 
 ### Pages
@@ -58,6 +60,7 @@ All user-scoped fns use `requireSupabaseAuth`; landing-page reads use a public s
 ### Design system
 
 Port the prototype's tokens verbatim into `src/styles.css`:
+
 - `--background: #fdfcf0` (paper), `--foreground: #1e293b` (ink)
 - `--primary: #3b82f6` (marker-blue), `--accent: #f43f5e` (marker-pink), `--highlight: #facc15`
 - Fonts: Space Grotesk (display/body), Gaegu (handwritten accents for story bodies, taglines)

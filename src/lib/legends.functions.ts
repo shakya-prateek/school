@@ -4,9 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export const listLegends = createServerFn({ method: "POST" })
-  .inputValidator((d: { schoolId: string }) =>
-    z.object({ schoolId: z.string().uuid() }).parse(d),
-  )
+  .inputValidator((d: { schoolId: string }) => z.object({ schoolId: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const { data: rows, error } = await (supabaseAdmin as any)
       .from("legends")
@@ -46,6 +44,16 @@ export const createLegend = createServerFn({ method: "POST" })
     return { id: legend.id };
   });
 
+export const deleteLegend = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context as any;
+    const { error } = await (supabase as any).from("legends").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const voteLegend = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { legendId: string; on: boolean }) =>
@@ -56,10 +64,7 @@ export const voteLegend = createServerFn({ method: "POST" })
     if (data.on) {
       await (supabase as any)
         .from("legend_votes")
-        .upsert(
-          { legend_id: data.legendId, user_id: userId },
-          { onConflict: "legend_id,user_id" },
-        );
+        .upsert({ legend_id: data.legendId, user_id: userId }, { onConflict: "legend_id,user_id" });
     } else {
       await (supabase as any)
         .from("legend_votes")

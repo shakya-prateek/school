@@ -49,7 +49,8 @@ function Landing() {
           </span>
         </h1>
         <p className="text-xl opacity-70 mb-10 max-w-xl mx-auto font-medium">
-          Share memories, discover hilarious school moments, and vote for the greatest school legends — anonymously.
+          Share memories, discover hilarious school moments, and vote for the greatest school
+          legends — anonymously.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
@@ -76,7 +77,7 @@ function Landing() {
           {trending.length === 0 ? (
             <EmptyCard
               text="No stories yet for this school. Be the first to share something legendary."
-              cta={user ? { to: "/stories/new", label: "Post a story" } : { to: "/login", label: "Sign in to post" }}
+              cta={{ to: "/stories/new", label: "Post a story" }}
             />
           ) : (
             <div className="grid gap-8">
@@ -96,11 +97,13 @@ function Landing() {
                   No legends yet. Nominate the first one!
                 </p>
               ) : (
-                topLegends.map((l: any, i: number) => <PodiumRow key={l.id} legend={l} rank={i + 1} />)
+                topLegends.map((l: any, i: number) => (
+                  <PodiumRow key={l.id} legend={l} rank={i + 1} />
+                ))
               )}
             </div>
             <Link
-              to={user ? "/legends/new" : "/login"}
+              to="/legends/new"
               className="block text-center w-full mt-8 py-3 bg-foreground text-background font-bold uppercase tracking-widest text-sm rounded hover:scale-[1.02] transition-transform"
             >
               Nominate a Legend

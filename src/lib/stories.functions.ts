@@ -45,9 +45,7 @@ export const listStories = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     let q = (supabaseAdmin as any)
       .from("stories")
-      .select(
-        "id, title, body, category, score, comment_count, created_at, author_id, profiles!stories_author_id_fkey(display_handle)",
-      )
+      .select("id, title, body, category, score, comment_count, created_at, author_id")
       .eq("school_id", data.schoolId);
     if (data.category) q = q.eq("category", data.category);
     if (data.q) q = q.ilike("title", `%${data.q}%`);
@@ -69,7 +67,7 @@ export const getStory = createServerFn({ method: "POST" })
     const { data: story, error } = await (supabaseAdmin as any)
       .from("stories")
       .select(
-        "id, title, body, category, score, comment_count, created_at, school_id, author_id, profiles!stories_author_id_fkey(display_handle), schools(id, slug, name)",
+        "id, title, body, category, score, comment_count, created_at, school_id, author_id, schools(id, slug, name)",
       )
       .eq("id", data.id)
       .maybeSingle();
@@ -78,7 +76,7 @@ export const getStory = createServerFn({ method: "POST" })
 
     const { data: comments } = await (supabaseAdmin as any)
       .from("story_comments")
-      .select("id, body, created_at, author_id, profiles!story_comments_author_id_fkey(display_handle)")
+      .select("id, body, created_at, author_id")
       .eq("story_id", data.id)
       .order("created_at", { ascending: false });
 
@@ -87,16 +85,15 @@ export const getStory = createServerFn({ method: "POST" })
 
 export const createStory = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    (d: { schoolId: string; title: string; body: string; category: string }) =>
-      z
-        .object({
-          schoolId: z.string().uuid(),
-          title: z.string().trim().min(3).max(140),
-          body: z.string().trim().min(5).max(5000),
-          category: z.enum(STORY_CATEGORIES),
-        })
-        .parse(d),
+  .inputValidator((d: { schoolId: string; title: string; body: string; category: string }) =>
+    z
+      .object({
+        schoolId: z.string().uuid(),
+        title: z.string().trim().min(3).max(140),
+        body: z.string().trim().min(5).max(5000),
+        category: z.enum(STORY_CATEGORIES),
+      })
+      .parse(d),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
@@ -119,7 +116,10 @@ export const voteStory = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { storyId: string; value: -1 | 0 | 1 }) =>
     z
-      .object({ storyId: z.string().uuid(), value: z.union([z.literal(-1), z.literal(0), z.literal(1)]) })
+      .object({
+        storyId: z.string().uuid(),
+        value: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
+      })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -138,6 +138,16 @@ export const voteStory = createServerFn({ method: "POST" })
           { onConflict: "story_id,user_id" },
         );
     }
+    return { ok: true };
+  });
+
+export const deleteStory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { supabase } = context as any;
+    const { error } = await (supabase as any).from("stories").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });
 

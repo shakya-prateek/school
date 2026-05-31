@@ -13,7 +13,10 @@ import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as SchoolsRouteImport } from './routes/schools'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LegendsRouteImport } from './routes/legends'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoriesIndexRouteImport } from './routes/stories.index'
+import { Route as LegendsIndexRouteImport } from './routes/legends.index'
 import { Route as StoriesNewRouteImport } from './routes/stories.new'
 import { Route as StoriesIdRouteImport } from './routes/stories.$id'
 import { Route as LegendsNewRouteImport } from './routes/legends.new'
@@ -38,10 +41,25 @@ const LegendsRoute = LegendsRouteImport.update({
   path: '/legends',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesIndexRoute = StoriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StoriesRoute,
+} as any)
+const LegendsIndexRoute = LegendsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LegendsRoute,
 } as any)
 const StoriesNewRoute = StoriesNewRouteImport.update({
   id: '/new',
@@ -61,6 +79,7 @@ const LegendsNewRoute = LegendsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/legends': typeof LegendsRouteWithChildren
   '/login': typeof LoginRoute
   '/schools': typeof SchoolsRoute
@@ -68,20 +87,24 @@ export interface FileRoutesByFullPath {
   '/legends/new': typeof LegendsNewRoute
   '/stories/$id': typeof StoriesIdRoute
   '/stories/new': typeof StoriesNewRoute
+  '/legends/': typeof LegendsIndexRoute
+  '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/legends': typeof LegendsRouteWithChildren
+  '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
   '/schools': typeof SchoolsRoute
-  '/stories': typeof StoriesRouteWithChildren
   '/legends/new': typeof LegendsNewRoute
   '/stories/$id': typeof StoriesIdRoute
   '/stories/new': typeof StoriesNewRoute
+  '/legends': typeof LegendsIndexRoute
+  '/stories': typeof StoriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/legends': typeof LegendsRouteWithChildren
   '/login': typeof LoginRoute
   '/schools': typeof SchoolsRoute
@@ -89,11 +112,14 @@ export interface FileRoutesById {
   '/legends/new': typeof LegendsNewRoute
   '/stories/$id': typeof StoriesIdRoute
   '/stories/new': typeof StoriesNewRoute
+  '/legends/': typeof LegendsIndexRoute
+  '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/legends'
     | '/login'
     | '/schools'
@@ -101,19 +127,23 @@ export interface FileRouteTypes {
     | '/legends/new'
     | '/stories/$id'
     | '/stories/new'
+    | '/legends/'
+    | '/stories/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/legends'
+    | '/admin'
     | '/login'
     | '/schools'
-    | '/stories'
     | '/legends/new'
     | '/stories/$id'
     | '/stories/new'
+    | '/legends'
+    | '/stories'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/legends'
     | '/login'
     | '/schools'
@@ -121,10 +151,13 @@ export interface FileRouteTypes {
     | '/legends/new'
     | '/stories/$id'
     | '/stories/new'
+    | '/legends/'
+    | '/stories/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   LegendsRoute: typeof LegendsRouteWithChildren
   LoginRoute: typeof LoginRoute
   SchoolsRoute: typeof SchoolsRoute
@@ -161,12 +194,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegendsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/stories/': {
+      id: '/stories/'
+      path: '/'
+      fullPath: '/stories/'
+      preLoaderRoute: typeof StoriesIndexRouteImport
+      parentRoute: typeof StoriesRoute
+    }
+    '/legends/': {
+      id: '/legends/'
+      path: '/'
+      fullPath: '/legends/'
+      preLoaderRoute: typeof LegendsIndexRouteImport
+      parentRoute: typeof LegendsRoute
     }
     '/stories/new': {
       id: '/stories/new'
@@ -194,10 +248,12 @@ declare module '@tanstack/react-router' {
 
 interface LegendsRouteChildren {
   LegendsNewRoute: typeof LegendsNewRoute
+  LegendsIndexRoute: typeof LegendsIndexRoute
 }
 
 const LegendsRouteChildren: LegendsRouteChildren = {
   LegendsNewRoute: LegendsNewRoute,
+  LegendsIndexRoute: LegendsIndexRoute,
 }
 
 const LegendsRouteWithChildren =
@@ -206,11 +262,13 @@ const LegendsRouteWithChildren =
 interface StoriesRouteChildren {
   StoriesIdRoute: typeof StoriesIdRoute
   StoriesNewRoute: typeof StoriesNewRoute
+  StoriesIndexRoute: typeof StoriesIndexRoute
 }
 
 const StoriesRouteChildren: StoriesRouteChildren = {
   StoriesIdRoute: StoriesIdRoute,
   StoriesNewRoute: StoriesNewRoute,
+  StoriesIndexRoute: StoriesIndexRoute,
 }
 
 const StoriesRouteWithChildren =
@@ -218,6 +276,7 @@ const StoriesRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   LegendsRoute: LegendsRouteWithChildren,
   LoginRoute: LoginRoute,
   SchoolsRoute: SchoolsRoute,
@@ -226,3 +285,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

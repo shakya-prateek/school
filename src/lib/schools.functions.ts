@@ -53,16 +53,19 @@ export const createSchool = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
-    await (supabase as any).from("school_members").insert({ school_id: school.id, user_id: userId });
-    await (supabase as any).from("profiles").update({ active_school_id: school.id }).eq("id", userId);
+    await (supabase as any)
+      .from("school_members")
+      .insert({ school_id: school.id, user_id: userId });
+    await (supabase as any)
+      .from("profiles")
+      .update({ active_school_id: school.id })
+      .eq("id", userId);
     return { school };
   });
 
 export const joinSchool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { schoolId: string }) =>
-    z.object({ schoolId: z.string().uuid() }).parse(d),
-  )
+  .inputValidator((d: { schoolId: string }) => z.object({ schoolId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
     await (supabase as any)
@@ -77,9 +80,7 @@ export const joinSchool = createServerFn({ method: "POST" })
 
 export const setActiveSchool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { schoolId: string }) =>
-    z.object({ schoolId: z.string().uuid() }).parse(d),
-  )
+  .inputValidator((d: { schoolId: string }) => z.object({ schoolId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
     await (supabase as any)
@@ -87,6 +88,32 @@ export const setActiveSchool = createServerFn({ method: "POST" })
       .update({ active_school_id: data.schoolId })
       .eq("id", userId);
     return { ok: true };
+  });
+
+/** Same school resolution as the home page: active school, or latest school in the DB. */
+export const resolveViewSchool = createServerFn({ method: "POST" })
+  .inputValidator((d: { schoolId?: string }) =>
+    z.object({ schoolId: z.string().uuid().optional() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    let schoolId = data.schoolId;
+    if (!schoolId) {
+      const { data: s, error } = await (supabaseAdmin as any)
+        .from("schools")
+        .select("id, slug, name")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      return { school: s ?? null };
+    }
+    const { data: s, error } = await (supabaseAdmin as any)
+      .from("schools")
+      .select("id, slug, name")
+      .eq("id", schoolId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return { school: s ?? null };
   });
 
 export const getMyContext = createServerFn({ method: "GET" })

@@ -120,7 +120,9 @@ function SchoolsPage() {
                     <div className="text-xs opacity-50 font-hand">{s.slug}</div>
                   </div>
                   {active ? (
-                    <span className="text-xs font-bold uppercase tracking-wider text-marker-blue">Active</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-marker-blue">
+                      Active
+                    </span>
                   ) : joined ? (
                     <button
                       onClick={() => setActive.mutate(s.id)}
@@ -140,7 +142,9 @@ function SchoolsPage() {
               );
             })}
             {(search?.schools ?? []).length === 0 && (
-              <p className="text-sm opacity-50 font-hand text-center py-8">No schools match yet — start one above.</p>
+              <p className="text-sm opacity-50 font-hand text-center py-8">
+                No schools match yet — start one above.
+              </p>
             )}
           </div>
         </section>

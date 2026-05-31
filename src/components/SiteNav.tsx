@@ -32,25 +32,29 @@ export function SiteNav({ schoolName }: { schoolName?: string | null }) {
         <Link to="/legends" className="hover:text-marker-pink transition-colors hidden sm:inline">
           Legends
         </Link>
+        <Link
+          to="/stories/new"
+          className="bg-foreground text-background px-4 py-2 rounded-sm rotate-[1deg] hover:rotate-0 transition-transform hidden sm:inline"
+        >
+          Post Story
+        </Link>
+        <Link
+          to="/legends/new"
+          className="border-2 border-ink px-4 py-2 rounded-sm hover:bg-card transition-colors hidden sm:inline"
+        >
+          Nominate
+        </Link>
         {loading ? null : user ? (
-          <>
-            <Link
-              to="/stories/new"
-              className="bg-foreground text-background px-4 py-2 rounded-sm rotate-[1deg] hover:rotate-0 transition-transform"
-            >
-              Post Story
-            </Link>
-            <button
-              onClick={() => supabase.auth.signOut()}
-              className="text-xs underline opacity-60 hover:opacity-100"
-            >
-              Sign out
-            </button>
-          </>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            className="text-xs underline opacity-60 hover:opacity-100"
+          >
+            Sign out
+          </button>
         ) : (
           <Link
             to="/login"
-            className="bg-foreground text-background px-4 py-2 rounded-sm rotate-[1deg] hover:rotate-0 transition-transform"
+            className="text-xs underline opacity-60 hover:opacity-100"
           >
             Sign in
           </Link>
