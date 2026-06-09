@@ -81,17 +81,17 @@ function SchoolsPage() {
 
         <section className="bg-card border-2 border-ink rounded-xl p-6 shadow-zine mb-8">
           <h2 className="font-bold text-lg mb-3">Start a new school</h2>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="e.g. Westside High"
-              className="flex-1 px-3 py-3 border-2 border-ink rounded bg-paper focus:outline-none"
+              className="flex-1 px-3 py-3 border-2 border-ink rounded bg-paper focus:outline-none w-full"
             />
             <button
               disabled={newName.trim().length < 2 || create.isPending}
               onClick={() => create.mutate(newName.trim())}
-              className="px-4 py-3 bg-foreground text-background font-bold rounded shadow-zine-sm disabled:opacity-50"
+              className="px-6 py-3 bg-foreground text-background font-bold rounded shadow-zine-sm disabled:opacity-50 w-full sm:w-auto cursor-pointer"
             >
               Create
             </button>

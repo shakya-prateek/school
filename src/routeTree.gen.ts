@@ -17,6 +17,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoriesIndexRouteImport } from './routes/stories.index'
 import { Route as LegendsIndexRouteImport } from './routes/legends.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as StoriesNewRouteImport } from './routes/stories.new'
 import { Route as StoriesIdRouteImport } from './routes/stories.$id'
 import { Route as LegendsNewRouteImport } from './routes/legends.new'
@@ -61,6 +62,11 @@ const LegendsIndexRoute = LegendsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LegendsRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const StoriesNewRoute = StoriesNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -79,7 +85,7 @@ const LegendsNewRoute = LegendsNewRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/legends': typeof LegendsRouteWithChildren
   '/login': typeof LoginRoute
   '/schools': typeof SchoolsRoute
@@ -87,24 +93,25 @@ export interface FileRoutesByFullPath {
   '/legends/new': typeof LegendsNewRoute
   '/stories/$id': typeof StoriesIdRoute
   '/stories/new': typeof StoriesNewRoute
+  '/admin/': typeof AdminIndexRoute
   '/legends/': typeof LegendsIndexRoute
   '/stories/': typeof StoriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
   '/schools': typeof SchoolsRoute
   '/legends/new': typeof LegendsNewRoute
   '/stories/$id': typeof StoriesIdRoute
   '/stories/new': typeof StoriesNewRoute
+  '/admin': typeof AdminIndexRoute
   '/legends': typeof LegendsIndexRoute
   '/stories': typeof StoriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/legends': typeof LegendsRouteWithChildren
   '/login': typeof LoginRoute
   '/schools': typeof SchoolsRoute
@@ -112,6 +119,7 @@ export interface FileRoutesById {
   '/legends/new': typeof LegendsNewRoute
   '/stories/$id': typeof StoriesIdRoute
   '/stories/new': typeof StoriesNewRoute
+  '/admin/': typeof AdminIndexRoute
   '/legends/': typeof LegendsIndexRoute
   '/stories/': typeof StoriesIndexRoute
 }
@@ -127,17 +135,18 @@ export interface FileRouteTypes {
     | '/legends/new'
     | '/stories/$id'
     | '/stories/new'
+    | '/admin/'
     | '/legends/'
     | '/stories/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/login'
     | '/schools'
     | '/legends/new'
     | '/stories/$id'
     | '/stories/new'
+    | '/admin'
     | '/legends'
     | '/stories'
   id:
@@ -151,13 +160,14 @@ export interface FileRouteTypes {
     | '/legends/new'
     | '/stories/$id'
     | '/stories/new'
+    | '/admin/'
     | '/legends/'
     | '/stories/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   LegendsRoute: typeof LegendsRouteWithChildren
   LoginRoute: typeof LoginRoute
   SchoolsRoute: typeof SchoolsRoute
@@ -222,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegendsIndexRouteImport
       parentRoute: typeof LegendsRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/stories/new': {
       id: '/stories/new'
       path: '/new'
@@ -245,6 +262,16 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface LegendsRouteChildren {
   LegendsNewRoute: typeof LegendsNewRoute
@@ -276,7 +303,7 @@ const StoriesRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   LegendsRoute: LegendsRouteWithChildren,
   LoginRoute: LoginRoute,
   SchoolsRoute: SchoolsRoute,

@@ -99,16 +99,22 @@ function LegendsPage() {
                 {[1, 0, 2].map((idx, i) => {
                   const l = top3[idx];
                   if (!l) return <div key={i} />;
-                  const heights = ["h-48", "h-64", "h-40"];
-                  const colors = ["bg-marker-blue", "bg-highlighter", "bg-marker-pink"];
+                  
+                  // Rank 1 (idx = 0): tallest, gold highlighter
+                  // Rank 2 (idx = 1): medium, blue
+                  // Rank 3 (idx = 2): short, pink
+                  const heights = ["h-64", "h-48", "h-40"];
+                  const colors = ["bg-highlighter text-ink", "bg-marker-blue text-white", "bg-marker-pink text-white"];
+                  const orderClasses = ["order-1 md:order-2", "order-2 md:order-1", "order-3 md:order-3"];
                   const rank = idx + 1;
+                  
                   return (
-                    <div key={l.id} className={`text-center order-${i + 1}`}>
+                    <div key={l.id} className={`text-center ${orderClasses[idx]}`}>
                       <div
-                        className={`bg-card border-2 border-ink rounded-xl p-6 shadow-zine ${rank === 1 ? "scale-105" : ""}`}
+                        className={`bg-card border-2 border-ink rounded-xl p-6 shadow-zine ${rank === 1 ? "md:scale-105 relative z-10" : ""}`}
                       >
                         <div
-                          className={`w-12 h-12 ${colors[idx]} text-white rounded-full mx-auto mb-3 flex items-center justify-center font-bold text-xl border-2 border-ink`}
+                          className={`w-12 h-12 ${colors[idx]} rounded-full mx-auto mb-3 flex items-center justify-center font-bold text-xl border-2 border-ink`}
                         >
                           {rank}
                         </div>
@@ -128,7 +134,7 @@ function LegendsPage() {
                         )}
                       </div>
                       <div
-                        className={`${heights[idx]} ${colors[idx]} border-2 border-ink border-t-0 rounded-b-xl opacity-40`}
+                        className={`${heights[idx]} ${colors[idx].split(" ")[0]} border-2 border-ink border-t-0 rounded-b-xl opacity-40`}
                       />
                       {user?.id === l.author_id && (
                         <div className="flex justify-end mt-3">

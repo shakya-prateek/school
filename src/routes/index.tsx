@@ -6,6 +6,7 @@ import { getHomeSnapshot } from "@/lib/legends.functions";
 import { CATEGORY_LABELS, type StoryCategory } from "@/lib/stories.functions";
 import { useAuth } from "@/lib/auth-context";
 import { getMyContext } from "@/lib/schools.functions";
+import { School, Trophy, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Landing });
 
@@ -67,6 +68,60 @@ function Landing() {
           </Link>
         </div>
       </header>
+
+      {/* ─── How it works guide ─── */}
+      <section className="max-w-4xl mx-auto px-4 mb-20">
+        <div className="bg-card border-2 border-ink rounded-3xl p-6 md:p-8 shadow-zine relative">
+          <div className="absolute -top-4 left-6 bg-highlighter border-2 border-ink px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider rotate-[-1deg] shadow-zine-sm">
+            Quick Guide: How to Bloom 🌸
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+            {/* Step 1: Change School */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-xl flex items-center gap-2 text-marker-blue">
+                <School className="w-6 h-6 shrink-0" />
+                1. Pick School
+              </h3>
+              <p className="text-sm opacity-90 leading-relaxed font-hand text-lg">
+                Click on the school badge at the top or visit the{" "}
+                <Link to="/schools" className="underline font-bold">Schools page</Link>. Set your active school to browse its local board. Can't find yours? Register it!
+              </p>
+            </div>
+
+            {/* Step 2: Nominator */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-xl flex items-center gap-2 text-marker-pink">
+                <Trophy className="w-6 h-6 shrink-0" />
+                2. Nominate Legends
+              </h3>
+              <p className="text-sm opacity-90 leading-relaxed font-hand text-lg">
+                Spotted someone legendary? A classmate, teacher, or canteen chef who did something unforgettable? Nominate them on the <Link to="/legends" className="underline font-bold">Legend Board</Link> and let everyone upvote them!
+              </p>
+            </div>
+
+            {/* Step 3: Stories */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-xl flex items-center gap-2 text-amber-600">
+                <BookOpen className="w-6 h-6 shrink-0" />
+                3. Share Memories
+              </h3>
+              <p className="text-sm opacity-90 leading-relaxed font-hand text-lg">
+                Post completely anonymous memories, funny classroom incidents, or test confessions.
+              </p>
+              {/* Mini Example */}
+              <div className="bg-highlighter/10 border border-ink border-dashed p-3 rounded-xl relative rotate-[0.5deg] text-xs">
+                <h4 className="font-bold mb-1 text-ink flex items-center gap-1">
+                  Example: The Bell Prank 🔔
+                </h4>
+                <p className="font-hand text-sm leading-snug text-ink/80">
+                  "Someone replaced all the hallway bells with the sound of a rooster crowing. The teachers were so confused for three classes!"
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <main className="max-w-6xl mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-3 gap-12 pb-24">
         <section className="lg:col-span-2">

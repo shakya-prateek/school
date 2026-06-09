@@ -91,17 +91,17 @@ function StoriesPage() {
           </p>
         ) : (
           <>
-            <div className="flex flex-wrap gap-3 mb-8 items-center">
+            <div className="flex flex-col sm:flex-row gap-3 mb-8 items-stretch sm:items-center">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search titles..."
-                className="px-3 py-2 border-2 border-ink rounded bg-card text-sm"
+                className="px-3 py-2 border-2 border-ink rounded bg-card text-sm w-full sm:w-64"
               />
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as StoryCategory | "")}
-                className="px-3 py-2 border-2 border-ink rounded bg-card text-sm font-bold"
+                className="px-3 py-2 border-2 border-ink rounded bg-card text-sm font-bold w-full sm:w-auto"
               >
                 <option value="">All categories</option>
                 {STORY_CATEGORIES.map((c) => (
@@ -110,12 +110,12 @@ function StoriesPage() {
                   </option>
                 ))}
               </select>
-              <div className="flex border-2 border-ink rounded overflow-hidden text-sm font-bold">
+              <div className="flex border-2 border-ink rounded overflow-hidden text-sm font-bold w-full sm:w-auto">
                 {(["newest", "trending"] as const).map((s) => (
                   <button
                     key={s}
                     onClick={() => setSort(s)}
-                    className={`px-3 py-2 ${sort === s ? "bg-foreground text-background" : "bg-card"}`}
+                    className={`flex-1 sm:flex-initial text-center px-4 py-2 cursor-pointer ${sort === s ? "bg-foreground text-background" : "bg-card"}`}
                   >
                     {s === "newest" ? "Newest" : "Trending"}
                   </button>
