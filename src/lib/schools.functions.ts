@@ -91,68 +91,33 @@ export const setActiveSchool = createServerFn({ method: "POST" })
   });
 
 export async function getSingleArchiveSchool() {
-  // 1. Try to find school with slug 'https-bloomingdaleschool-co-in'
+  // 1. Try to find school with slug 'default-school'
   let { data: school } = await (supabaseAdmin as any)
     .from("schools")
     .select("id, slug, name")
-    .eq("slug", "https-bloomingdaleschool-co-in")
+    .eq("slug", "default-school")
     .maybeSingle();
 
-  // 2. If not found, try to find any school containing 'bloomingdale'
+  // 2. If not found, try any other school containing 'bunkybloom'
   if (!school) {
     const { data: s } = await (supabaseAdmin as any)
       .from("schools")
       .select("id, slug, name")
-      .ilike("name", "%bloomingdale%")
+      .ilike("slug", "%bunkybloom%")
       .limit(1)
       .maybeSingle();
     school = s;
   }
 
-  // 3. Try to find school containing 'bunkybloom' or 'default-school'
-  if (!school) {
-    const { data: s } = await (supabaseAdmin as any)
-      .from("schools")
-      .select("id, slug, name")
-      .or("slug.eq.default-school,slug.eq.bunkybloom-community,slug.eq.bunkybloom-academy")
-      .limit(1)
-      .maybeSingle();
-    school = s;
-  }
-
-  // 4. Try to find school that has any stories/confessions
-  if (!school) {
-    const { data: story } = await (supabaseAdmin as any)
-      .from("stories")
-      .select("school_id")
-      .limit(1)
-      .maybeSingle();
-    if (story?.school_id) {
-      const { data: s } = await (supabaseAdmin as any)
-        .from("schools")
-        .select("id, slug, name")
-        .eq("id", story.school_id)
-        .maybeSingle();
-      school = s;
-    }
-  }
-
-  // 5. Try the oldest school
-  if (!school) {
-    const { data: s } = await (supabaseAdmin as any)
-      .from("schools")
-      .select("id, slug, name")
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    school = s;
-  }
-
-  // 6. If still no school, create one
+  // 3. If still no school, create/ensure the default one
   if (!school) {
     const { data: s, error: insertError } = await (supabaseAdmin as any)
       .from("schools")
-      .insert({ name: "BunkyBloom Community", slug: "bunkybloom-community" })
+      .insert({
+        id: "e69c0384-784b-40ec-b388-e8826d7f9907",
+        name: "BunkyBloom Community",
+        slug: "default-school"
+      })
       .select("id, slug, name")
       .single();
     if (insertError) throw new Error(insertError.message);

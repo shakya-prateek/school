@@ -180,9 +180,10 @@ function StoryCard({ story, accent }: { story: any; accent: "blue" | "pink" }) {
         </div>
         <div className="flex justify-between items-start mb-4 gap-4">
           <h3 className="text-2xl font-bold">{story.title}</h3>
-          <div className="flex flex-col items-center bg-paper border-2 border-ink p-2 rounded-lg shrink-0">
-            <span className="text-xl">▲</span>
-            <span className="font-bold">{story.score}</span>
+          <div className="flex flex-col items-center bg-paper border-2 border-ink p-2.5 rounded-lg shrink-0 min-w-[3.5rem] select-none">
+            <span className="text-lg leading-none">▲</span>
+            <span className="font-bold text-sm leading-none mt-1">{story.score}</span>
+            <span className="text-[9px] font-bold uppercase tracking-wider opacity-60 mt-1">Votes</span>
           </div>
         </div>
         <p className="text-lg font-hand opacity-80 leading-relaxed line-clamp-3">{story.body}</p>

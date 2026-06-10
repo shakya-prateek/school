@@ -137,9 +137,10 @@ function StoriesPage() {
                       </div>
                       <div className="flex justify-between gap-4 items-start mb-3">
                         <h3 className="text-2xl font-bold">{s.title}</h3>
-                        <div className="flex flex-col items-center bg-paper border-2 border-ink p-2 rounded-lg shrink-0">
-                          <span>▲</span>
-                          <span className="font-bold">{s.score}</span>
+                        <div className="flex flex-col items-center bg-paper border-2 border-ink p-2.5 rounded-lg shrink-0 min-w-[3.5rem] select-none">
+                          <span className="text-lg leading-none">▲</span>
+                          <span className="font-bold text-sm leading-none mt-1">{s.score}</span>
+                          <span className="text-[9px] font-bold uppercase tracking-wider opacity-60 mt-1">Votes</span>
                         </div>
                       </div>
                       <p className="font-hand text-lg opacity-80 line-clamp-3 mb-4">{s.body}</p>
