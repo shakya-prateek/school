@@ -90,41 +90,85 @@ export const setActiveSchool = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export async function getSingleArchiveSchool() {
+  // 1. Try to find school with slug 'https-bloomingdaleschool-co-in'
+  let { data: school } = await (supabaseAdmin as any)
+    .from("schools")
+    .select("id, slug, name")
+    .eq("slug", "https-bloomingdaleschool-co-in")
+    .maybeSingle();
+
+  // 2. If not found, try to find any school containing 'bloomingdale'
+  if (!school) {
+    const { data: s } = await (supabaseAdmin as any)
+      .from("schools")
+      .select("id, slug, name")
+      .ilike("name", "%bloomingdale%")
+      .limit(1)
+      .maybeSingle();
+    school = s;
+  }
+
+  // 3. Try to find school containing 'bunkybloom' or 'default-school'
+  if (!school) {
+    const { data: s } = await (supabaseAdmin as any)
+      .from("schools")
+      .select("id, slug, name")
+      .or("slug.eq.default-school,slug.eq.bunkybloom-community,slug.eq.bunkybloom-academy")
+      .limit(1)
+      .maybeSingle();
+    school = s;
+  }
+
+  // 4. Try to find school that has any stories/confessions
+  if (!school) {
+    const { data: story } = await (supabaseAdmin as any)
+      .from("stories")
+      .select("school_id")
+      .limit(1)
+      .maybeSingle();
+    if (story?.school_id) {
+      const { data: s } = await (supabaseAdmin as any)
+        .from("schools")
+        .select("id, slug, name")
+        .eq("id", story.school_id)
+        .maybeSingle();
+      school = s;
+    }
+  }
+
+  // 5. Try the oldest school
+  if (!school) {
+    const { data: s } = await (supabaseAdmin as any)
+      .from("schools")
+      .select("id, slug, name")
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+    school = s;
+  }
+
+  // 6. If still no school, create one
+  if (!school) {
+    const { data: s, error: insertError } = await (supabaseAdmin as any)
+      .from("schools")
+      .insert({ name: "BunkyBloom Community", slug: "bunkybloom-community" })
+      .select("id, slug, name")
+      .single();
+    if (insertError) throw new Error(insertError.message);
+    school = s;
+  }
+
+  return school;
+}
+
 /** Same school resolution as the home page: active school, or latest school in the DB. */
 export const resolveViewSchool = createServerFn({ method: "POST" })
   .inputValidator((d: { schoolId?: string }) =>
     z.object({ schoolId: z.string().uuid().optional() }).parse(d),
   )
-  .handler(async ({ data }) => {
-    let schoolId = data.schoolId;
-    let school: any = null;
-    if (schoolId) {
-      const { data: s } = await (supabaseAdmin as any)
-        .from("schools")
-        .select("id, slug, name")
-        .eq("id", schoolId)
-        .maybeSingle();
-      school = s;
-    }
-    if (!school) {
-      const { data: s, error } = await (supabaseAdmin as any)
-        .from("schools")
-        .select("id, slug, name")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (error) throw new Error(error.message);
-      school = s;
-    }
-    if (!school) {
-      const { data: s, error: insertError } = await (supabaseAdmin as any)
-        .from("schools")
-        .insert({ name: "BunkyBloom Academy", slug: "bunkybloom-academy" })
-        .select("id, slug, name")
-        .single();
-      if (insertError) throw new Error(insertError.message);
-      school = s;
-    }
+  .handler(async () => {
+    const school = await getSingleArchiveSchool();
     return { school };
   });
 
@@ -138,15 +182,16 @@ export const getMyContext = createServerFn({ method: "GET" })
       .eq("id", userId)
       .maybeSingle();
 
-    let activeSchool: any = null;
-    if (profile?.active_school_id) {
-      const { data: s } = await (supabaseAdmin as any)
-        .from("schools")
-        .select("id, slug, name")
-        .eq("id", profile.active_school_id)
-        .maybeSingle();
-      activeSchool = s ?? null;
+    const activeSchool = await getSingleArchiveSchool();
+
+    if (profile && profile.active_school_id !== activeSchool.id) {
+      await (supabase as any)
+        .from("profiles")
+        .update({ active_school_id: activeSchool.id })
+        .eq("id", userId);
+      profile.active_school_id = activeSchool.id;
     }
+
     const { data: memberships } = await (supabase as any)
       .from("school_members")
       .select("school_id, schools(id, slug, name)")

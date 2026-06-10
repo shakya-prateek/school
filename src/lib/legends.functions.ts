@@ -75,40 +75,15 @@ export const voteLegend = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+import { getSingleArchiveSchool } from "./schools.functions";
+
 export const getHomeSnapshot = createServerFn({ method: "POST" })
   .inputValidator((d: { schoolId?: string }) =>
     z.object({ schoolId: z.string().uuid().optional() }).parse(d),
   )
-  .handler(async ({ data }) => {
-    let schoolId = data.schoolId;
-    let school: any = null;
-    if (schoolId) {
-      const { data: s } = await (supabaseAdmin as any)
-        .from("schools")
-        .select("id, slug, name")
-        .eq("id", schoolId)
-        .maybeSingle();
-      school = s;
-    }
-    if (!school) {
-      const { data: s } = await (supabaseAdmin as any)
-        .from("schools")
-        .select("id, slug, name")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      school = s;
-    }
-    if (!school) {
-      const { data: s, error: insertError } = await (supabaseAdmin as any)
-        .from("schools")
-        .insert({ name: "BunkyBloom Academy", slug: "bunkybloom-academy" })
-        .select("id, slug, name")
-        .single();
-      if (insertError) throw new Error(insertError.message);
-      school = s;
-    }
-    schoolId = school.id;
+  .handler(async () => {
+    const school = await getSingleArchiveSchool();
+    const schoolId = school.id;
 
     const { data: topLegends } = await (supabaseAdmin as any)
       .from("legends")
