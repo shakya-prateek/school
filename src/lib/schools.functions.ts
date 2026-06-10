@@ -97,7 +97,16 @@ export const resolveViewSchool = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     let schoolId = data.schoolId;
-    if (!schoolId) {
+    let school: any = null;
+    if (schoolId) {
+      const { data: s } = await (supabaseAdmin as any)
+        .from("schools")
+        .select("id, slug, name")
+        .eq("id", schoolId)
+        .maybeSingle();
+      school = s;
+    }
+    if (!school) {
       const { data: s, error } = await (supabaseAdmin as any)
         .from("schools")
         .select("id, slug, name")
@@ -105,15 +114,18 @@ export const resolveViewSchool = createServerFn({ method: "POST" })
         .limit(1)
         .maybeSingle();
       if (error) throw new Error(error.message);
-      return { school: s ?? null };
+      school = s;
     }
-    const { data: s, error } = await (supabaseAdmin as any)
-      .from("schools")
-      .select("id, slug, name")
-      .eq("id", schoolId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    return { school: s ?? null };
+    if (!school) {
+      const { data: s, error: insertError } = await (supabaseAdmin as any)
+        .from("schools")
+        .insert({ name: "BunkyBloom Academy", slug: "bunkybloom-academy" })
+        .select("id, slug, name")
+        .single();
+      if (insertError) throw new Error(insertError.message);
+      school = s;
+    }
+    return { school };
   });
 
 export const getMyContext = createServerFn({ method: "GET" })

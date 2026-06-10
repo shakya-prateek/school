@@ -85,16 +85,21 @@ function StoryDetail() {
             <div className="flex justify-between items-start gap-4 mb-4">
               <h1 className="text-4xl font-bold">{story.title}</h1>
               <div className="flex flex-col items-center bg-paper border-2 border-ink p-3 rounded-lg shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1 select-none">
+                  Vote
+                </span>
                 <button
                   onClick={() => (user ? vote.mutate(1) : toast.error("Sign in to vote"))}
-                  className="text-xl hover:text-marker-blue"
+                  className="text-xl hover:text-marker-blue cursor-pointer transition-colors"
+                  title="Upvote"
                 >
                   ▲
                 </button>
-                <span className="font-bold text-lg">{story.score}</span>
+                <span className="font-bold text-lg my-1">{story.score}</span>
                 <button
                   onClick={() => (user ? vote.mutate(-1) : toast.error("Sign in to vote"))}
-                  className="text-xl hover:text-marker-pink"
+                  className="text-xl hover:text-marker-pink cursor-pointer transition-colors"
+                  title="Downvote"
                 >
                   ▼
                 </button>

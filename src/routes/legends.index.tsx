@@ -170,17 +170,21 @@ function LegendsPage() {
                         <h4 className="font-bold">{l.name}</h4>
                         <p className="text-sm font-hand opacity-70">{l.description}</p>
                       </div>
-                      <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center bg-paper border-2 border-ink px-3 py-2 rounded-lg shrink-0">
+                        <span className="text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1 select-none">
+                          Vote
+                        </span>
                         <button
                           type="button"
                           onClick={() =>
                             user ? vote.mutate(l.id) : toast.error("Sign in to vote")
                           }
-                          className="hover:text-marker-blue"
+                          className="text-xl hover:text-marker-blue cursor-pointer transition-colors"
+                          title="Vote"
                         >
                           ▲
                         </button>
-                        <span className="font-bold text-sm">{l.score}</span>
+                        <span className="font-bold text-sm mt-1">{l.score}</span>
                       </div>
                     </div>
                     {user?.id === l.author_id && (

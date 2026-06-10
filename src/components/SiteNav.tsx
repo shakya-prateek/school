@@ -21,16 +21,6 @@ export function SiteNav({ schoolName }: { schoolName?: string | null }) {
           >
             BunkyBloom
           </Link>
-          <Link
-            to="/schools"
-            className="hidden md:flex items-center gap-2 bg-card border-2 border-ink px-3 py-1 rounded-full shadow-zine-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
-          >
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider">
-              {schoolName ?? "Pick a school"}
-            </span>
-            <span className="opacity-40">▼</span>
-          </Link>
           <span className="hidden sm:inline-flex">
             <HowItWorksModal />
           </span>
@@ -87,20 +77,6 @@ export function SiteNav({ schoolName }: { schoolName?: string | null }) {
       {/* ─── Mobile drawer ─── */}
       {mobileOpen && (
         <div className="sm:hidden mt-4 bg-card border-2 border-ink rounded-xl p-5 shadow-zine space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-          {/* School badge – visible on mobile */}
-          <Link
-            to="/schools"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 bg-paper border-2 border-ink px-3 py-2 rounded-full shadow-zine-sm w-full justify-center"
-          >
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider">
-              {schoolName ?? "Pick a school"}
-            </span>
-            <span className="opacity-40">▼</span>
-          </Link>
-
-          <div className="h-px bg-ink/10" />
 
           <Link
             to="/stories"

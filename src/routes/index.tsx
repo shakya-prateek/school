@@ -76,35 +76,23 @@ function Landing() {
             Quick Guide: How to Bloom 🌸
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
-            {/* Step 1: Change School */}
-            <div className="space-y-3">
-              <h3 className="font-bold text-xl flex items-center gap-2 text-marker-blue">
-                <School className="w-6 h-6 shrink-0" />
-                1. Pick School
-              </h3>
-              <p className="text-sm opacity-90 leading-relaxed font-hand text-lg">
-                Click on the school badge at the top or visit the{" "}
-                <Link to="/schools" className="underline font-bold">Schools page</Link>. Set your active school to browse its local board. Can't find yours? Register it!
-              </p>
-            </div>
-
-            {/* Step 2: Nominator */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+            {/* Step 1: Nominator */}
             <div className="space-y-3">
               <h3 className="font-bold text-xl flex items-center gap-2 text-marker-pink">
                 <Trophy className="w-6 h-6 shrink-0" />
-                2. Nominate Legends
+                1. Nominate Legends
               </h3>
               <p className="text-sm opacity-90 leading-relaxed font-hand text-lg">
                 Spotted someone legendary? A classmate, teacher, or canteen chef who did something unforgettable? Nominate them on the <Link to="/legends" className="underline font-bold">Legend Board</Link> and let everyone upvote them!
               </p>
             </div>
 
-            {/* Step 3: Stories */}
+            {/* Step 2: Stories */}
             <div className="space-y-3">
               <h3 className="font-bold text-xl flex items-center gap-2 text-amber-600">
                 <BookOpen className="w-6 h-6 shrink-0" />
-                3. Share Memories
+                2. Share Memories
               </h3>
               <p className="text-sm opacity-90 leading-relaxed font-hand text-lg">
                 Post completely anonymous memories, funny classroom incidents, or test confessions.
